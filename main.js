@@ -22,17 +22,11 @@ function getRow(firstRow, secondRow) {
         }
     }
 
-
-    if (firstCounter > secondCounter) {
-        return firstRow
-    } else if (firstCounter < secondCounter) {
-        return secondRow
-    } else {
-        return 'Количество букв "' + letter + '" в строках равно'
-    }
+    let resultRow = (firstCounter > secondCounter) ? firstRow : secondRow;
+    return resultRow
 }
 
-function startFirstTask(){
+function startFirstTask() {
     firstRow = prompt('Напишите первое словосочетание', firstRow);
     secondRow = prompt('Напишите второе словосочетание', secondRow);
     letter = prompt('Введите букву для поиска', letter);
@@ -43,10 +37,73 @@ function startFirstTask(){
 // Задание №2
 let phone = '+71234567890';
 
+// function formattedPhone(phone) {
+//     let result = '';
+//     if (phone.length === 12) {
+//         for (let i = 0; i <= phone.length - 1; i++) {
+//             if (i === 1) {
+//                 result += phone.charAt(i) + ' (';
+//
+//             } else if (i === 4) {
+//                 result += phone.charAt(i) + ') ';
+//
+//             } else if (i === 7 || i === 9) {
+//                 result += phone.charAt(i) + '-';
+//
+//             } else {
+//                 result += phone.charAt(i);
+//             }
+//         }
+//
+//         return result
+//     } else if (phone.length === 11) {
+//         for (let i = 0; i <= phone.length - 1; i++) {
+//             if (i === 0) {
+//                 result += '+7 (';
+//
+//             } else if (i === 3) {
+//                 result += phone.charAt(i) + ') ';
+//
+//             } else if (i === 6 || i === 8) {
+//                 result += phone.charAt(i) + '-';
+//
+//             } else {
+//                 result += phone.charAt(i);
+//             }
+//         }
+//
+//         return result
+//     } else if (phone.length === 10) {
+//         for (let i = 0; i <= phone.length - 1; i++) {
+//             if (i === 0) {
+//                 result += '+7 (' + phone.charAt(i);
+//
+//             } else if (i === 2) {
+//                 result += phone.charAt(i) + ') ';
+//
+//             } else if (i === 5 || i === 7) {
+//                 result += phone.charAt(i) + '-';
+//
+//             } else {
+//                 result += phone.charAt(i);
+//             }
+//         }
+//
+//         return result
+//     } else {
+//         alert('Похоже это не номер телефона, попытайся еще');
+//         startSecondTask();
+//         return result
+//     }
+//
+// }
+
 function formattedPhone(phone) {
     let result = '';
-    if (phone.length === 12) {
-        for (let i = 0; i <= phone.length - 1; i++) {
+
+    for (let i = 0; i <= phone.length - 1; i++) {
+
+        if (phone.length === 12) {
             if (i === 1) {
                 result += phone.charAt(i) + ' (';
 
@@ -59,15 +116,12 @@ function formattedPhone(phone) {
             } else {
                 result += phone.charAt(i);
             }
-        }
-
-        return result
-    } else if (phone.length === 11) {
-        for (let i = 0; i <= phone.length - 1; i++) {
+            // return result
+        } else if (phone.length === 11) {
             if (i === 0) {
                 result += '+7 (';
 
-            } else if (i === 3  ) {
+            } else if (i === 3) {
                 result += phone.charAt(i) + ') ';
 
             } else if (i === 6 || i === 8) {
@@ -76,39 +130,36 @@ function formattedPhone(phone) {
             } else {
                 result += phone.charAt(i);
             }
-        }
+            // return result
 
-        return result
-    } else if (phone.length === 10) {
-        for (let i = 0; i <= phone.length - 1; i++) {
+        } else if (phone.length === 10) {
             if (i === 0) {
-                result += '+7 (' + phone.charAt(i);
+                result += '+7 (';
 
-            } else if (i === 2) {
+            } else if (i === 3) {
                 result += phone.charAt(i) + ') ';
 
-            } else if (i === 5 || i === 7) {
+            } else if (i === 6 || i === 8) {
                 result += phone.charAt(i) + '-';
 
             } else {
                 result += phone.charAt(i);
             }
+
+        } else {
+            alert('Похоже это не номер телефона, попытайся еще');
+            startSecondTask();
         }
 
-        return result
-    } else {
-        alert('Похоже это не номер телефона, попытайся еще');
-        startSecondTask();
-        return result
     }
+    return result
 
 }
 
-function startSecondTask(){
+function startSecondTask() {
     phone = prompt('Введите номер телефона', phone);
     console.log(formattedPhone(phone));
 }
-
 
 
 if (taskNumber === '1') {
@@ -116,6 +167,3 @@ if (taskNumber === '1') {
 } else {
     startSecondTask();
 }
-
-
-
