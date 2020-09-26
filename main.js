@@ -1,108 +1,85 @@
-let taskNumber = prompt('Какое задание выбрать 1 или 2?', '2');
-
-// Задание №1
-let firstRow = 'мама мыла раму';
-let secondRow = 'собака друг человека';
-let letter = 'а';
-
-function getRow(firstRow, secondRow) {
-    let firstCounter = 0;
-    let secondCounter = 0;
-
-    for (let i = 0; i <= firstRow.length - 1; i++) {
-
-        if (firstRow.charAt(i) === letter) {
-            ++firstCounter;
-        }
-    }
-    for (let i = 0; i <= secondRow.length - 1; i++) {
-
-        if (secondRow.charAt(i) === letter) {
-            ++secondCounter;
-        }
-    }
-
-    let resultRow = (firstCounter > secondCounter) ? firstRow : secondRow;
-    return resultRow
+const character = {
+    name: 'Pikachu',
+    defaultHP: 100,
+    damageHP: 100,
+    elHP: document.getElementById('health-character'),
+    elProgressbar: document.getElementById('progressbar-character'),
 }
 
-function startFirstTask() {
-    firstRow = prompt('Напишите первое словосочетание', firstRow);
-    secondRow = prompt('Напишите второе словосочетание', secondRow);
-    letter = prompt('Введите букву для поиска', letter);
-    console.log(getRow(firstRow, secondRow));
+const enemy = {
+    name: 'Charmander',
+    defaultHP: 100,
+    damageHP: 100,
+    elHP: document.getElementById('health-enemy'),
+    elProgressbar: document.getElementById('progressbar-enemy'),
 }
 
+const buttonsConfig = [
+    {
+        elButton: document.getElementById('btn-kick'),
+        damageMultiplier: 20,
+    },
+    {
+        elButton: document.getElementById('btn-fatality'),
+        damageMultiplier: 30,
+    },
+];
 
-// Задание №2
-let phone = '+71234567890';
 
-function formattedPhone(phone) {
-    let result = '';
-
-    for (let i = 0; i <= phone.length - 1; i++) {
-
-        if (phone.length === 12) {
-            if (i === 1) {
-                result += phone.charAt(i) + ' (';
-
-            } else if (i === 4) {
-                result += phone.charAt(i) + ') ';
-
-            } else if (i === 7 || i === 9) {
-                result += phone.charAt(i) + '-';
-
-            } else {
-                result += phone.charAt(i);
-            }
-            // return result
-        } else if (phone.length === 11) {
-            if (i === 0) {
-                result += '+7 (';
-
-            } else if (i === 3) {
-                result += phone.charAt(i) + ') ';
-
-            } else if (i === 6 || i === 8) {
-                result += phone.charAt(i) + '-';
-
-            } else {
-                result += phone.charAt(i);
-            }
-            // return result
-
-        } else if (phone.length === 10) {
-            if (i === 0) {
-                result += '+7 (';
-
-            } else if (i === 3) {
-                result += phone.charAt(i) + ') ';
-
-            } else if (i === 6 || i === 8) {
-                result += phone.charAt(i) + '-';
-
-            } else {
-                result += phone.charAt(i);
-            }
-
-        } else {
-            alert('Похоже это не номер телефона, попытайся еще');
-            startSecondTask();
-        }
+function setupButtons(buttons) {
+    for (let i = 0; i < buttons.length; i++) {
+        buttons[i].elButton.addEventListener('click', function () {
+            console.log('KICK!!!');
+            changeHP(random(buttons[i].damageMultiplier), character);
+            changeHP(random(buttons[i].damageMultiplier), enemy);
+        });
 
     }
-    return result
-
-}
-
-function startSecondTask() {
-    phone = prompt('Введите номер телефона', phone);
-    console.log(formattedPhone(phone));
 }
 
 
-if (taskNumber === '1') {
-    startFirstTask();
-} else {
-    startSecondTask();
+function renderHPLife(person) {
+    person.elHP.innerText = person.damageHP + ' / ' + person.defaultHP;
 }
+
+function renderProgressbarHP(person) {
+    person.elProgressbar.style.width = person.damageHP + '%'
+}
+
+function renderHP(person) {
+    renderHPLife(person);
+    renderProgressbarHP(person);
+}
+
+function buttonsDisable(buttons) {
+    for (let i = 0; i < buttons.length; i++) {
+        buttons[i].elButton.disabled = true;
+
+    }
+}
+
+function changeHP(count, person) {
+    if (person.damageHP < count) {
+        person.damageHP = 0;
+        buttonsDisable(buttonsConfig);
+        renderHP(person);
+        console.log(person.damageHP);
+        alert('Бедный' + person.name +'проиграл бой!');
+
+    } else {
+        person.damageHP -= count;
+        renderHP(person);
+    }
+}
+
+function random(num) {
+
+    return Math.ceil(Math.random() * num);
+}
+
+function init() {
+    console.log('Start Game!');
+    setupButtons(buttonsConfig);
+}
+
+init();
