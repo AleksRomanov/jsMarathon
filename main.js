@@ -1,17 +1,19 @@
 const character = {
     name: 'Pikachu',
-    defaultHP: 100,
-    damageHP: 100,
+    defaultHP: 150,
+    damageHP: 150,
     elHP: document.getElementById('health-character'),
     elProgressbar: document.getElementById('progressbar-character'),
+    changeHP: changeHP,
 }
 
 const enemy = {
     name: 'Charmander',
-    defaultHP: 100,
-    damageHP: 100,
+    defaultHP: 150,
+    damageHP: 150,
     elHP: document.getElementById('health-enemy'),
     elProgressbar: document.getElementById('progressbar-enemy'),
+    changeHP: changeHP,
 }
 
 const buttonsConfig = [
@@ -21,7 +23,7 @@ const buttonsConfig = [
     },
     {
         elButton: document.getElementById('btn-fatality'),
-        damageMultiplier: 30,
+        damageMultiplier: 40,
     },
 ];
 
@@ -30,8 +32,8 @@ function setupButtons(buttons) {
     for (let i = 0; i < buttons.length; i++) {
         buttons[i].elButton.addEventListener('click', function () {
             console.log('KICK!!!');
-            changeHP(random(buttons[i].damageMultiplier), character);
-            changeHP(random(buttons[i].damageMultiplier), enemy);
+            character.changeHP(random(buttons[i].damageMultiplier));
+            enemy.changeHP(random(buttons[i].damageMultiplier));
         });
 
     }
@@ -43,7 +45,7 @@ function renderHPLife(person) {
 }
 
 function renderProgressbarHP(person) {
-    person.elProgressbar.style.width = person.damageHP + '%'
+    person.elProgressbar.style.width = (person.damageHP * 100) / person.defaultHP + '%'
 }
 
 function renderHP(person) {
@@ -58,17 +60,17 @@ function buttonsDisable(buttons) {
     }
 }
 
-function changeHP(count, person) {
-    if (person.damageHP < count) {
-        person.damageHP = 0;
+function changeHP(count) {
+    if (count > (this.damageHP * 100) / this.defaultHP) {
+        this.damageHP = 0;
         buttonsDisable(buttonsConfig);
-        renderHP(person);
-        console.log(person.damageHP);
-        alert('Бедный' + person.name +'проиграл бой!');
+        renderHP(this);
+        console.log(this.damageHP);
+        alert('Бедный ' + this.name + ' проиграл бой!');
 
     } else {
-        person.damageHP -= count;
-        renderHP(person);
+        this.damageHP -= count;
+        renderHP(this);
     }
 }
 
@@ -79,6 +81,8 @@ function random(num) {
 
 function init() {
     console.log('Start Game!');
+    renderHP(character);
+    renderHP(enemy);
     setupButtons(buttonsConfig);
 }
 
