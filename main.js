@@ -61,12 +61,12 @@ function buttonsDisable(buttons) {
 }
 
 function changeHP(count) {
-    if (this.damageHP < count) {
+    if (count > (this.damageHP * 100) / this.defaultHP) {
         this.damageHP = 0;
         buttonsDisable(buttonsConfig);
         renderHP(this);
         console.log(this.damageHP);
-        alert('Бедный ' + this.name +' проиграл бой!');
+        alert('Бедный ' + this.name + ' проиграл бой!');
 
     } else {
         this.damageHP -= count;
