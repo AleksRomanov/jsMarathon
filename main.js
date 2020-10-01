@@ -4,7 +4,10 @@ const character = {
     damageHP: 150,
     elHP: document.getElementById('health-character'),
     elProgressbar: document.getElementById('progressbar-character'),
-    changeHP: changeHP,
+    changeHP,
+    renderHPLife,
+    renderProgressbarHP,
+    renderHP
 }
 
 const enemy = {
@@ -13,7 +16,10 @@ const enemy = {
     damageHP: 150,
     elHP: document.getElementById('health-enemy'),
     elProgressbar: document.getElementById('progressbar-enemy'),
-    changeHP: changeHP,
+    changeHP,
+    renderHPLife,
+    renderProgressbarHP,
+    renderHP
 }
 
 const buttonsConfig = [
@@ -40,17 +46,17 @@ function setupButtons(buttons) {
 }
 
 
-function renderHPLife(person) {
-    person.elHP.innerText = person.damageHP + ' / ' + person.defaultHP;
+function renderHPLife() {
+    this.elHP.innerText = this.damageHP + ' / ' + this.defaultHP;
 }
 
-function renderProgressbarHP(person) {
-    person.elProgressbar.style.width = (person.damageHP * 100) / person.defaultHP + '%'
+function renderProgressbarHP() {
+    this.elProgressbar.style.width = (this.damageHP * 100) / this.defaultHP + '%'
 }
 
-function renderHP(person) {
-    renderHPLife(person);
-    renderProgressbarHP(person);
+function renderHP() {
+    this.renderHPLife();
+    this.renderProgressbarHP();
 }
 
 function buttonsDisable(buttons) {
@@ -61,29 +67,72 @@ function buttonsDisable(buttons) {
 }
 
 function changeHP(count) {
+    const damageCount = Math.ceil((this.defaultHP / 100) * count);
+    this.damageHP -= damageCount;
+    console.log('HP ' + this.name + this.damageHP);
+    console.log('Actual damage: ' + Math.ceil((this.defaultHP / 100) * count));
+
     if (count > (this.damageHP * 100) / this.defaultHP) {
         this.damageHP = 0;
-        buttonsDisable(buttonsConfig);
-        renderHP(this);
-        console.log(this.damageHP);
-        alert('Бедный ' + this.name + ' проиграл бой!');
 
-    } else {
-        this.damageHP -= count;
-        renderHP(this);
+        if (this.name === character.name) {
+            console.log(enemy.name + ' make last hit ' + '(' + damageCount + ') ' + 'to ' + character.name);
+        } else {
+            console.log(character.name + ' make last hit ' + '(' + damageCount + ') ' + 'to ' + enemy.name);
+        }
+
+        console.log('Бедный ' + this.name + ' проиграл бой!');
+        buttonsDisable(buttonsConfig);
     }
+
+    if (this.name === character.name) {
+        createLog(character, enemy, damageCount);
+    } else {
+        createLog(enemy, character, damageCount);
+    }
+
+    this.renderHP();
 }
 
 function random(num) {
-
     return Math.ceil(Math.random() * num);
+}
+
+function createLog(target, person, damage) {
+    const logsBar = document.getElementById('logs');
+    const consoleLog = document.createElement('p');
+    consoleLog.innerText = generateLog(target, person, damage);
+    logsBar.insertBefore(consoleLog, logsBar.children[0])
+}
+
+function generateLog(firstOpponent, secondOpponent, damage) {
+    const logs = [
+        `${firstOpponent.name} вспомнил что-то важное, но неожиданно ${secondOpponent.name}, не помня себя от испуга, ударил в предплечье врага. -${damage}, [${firstOpponent.damageHP}/${firstOpponent.defaultHP}]`, // -12, [88/100]
+        `${firstOpponent.name} поперхнулся, и за это ${secondOpponent.name} с испугу приложил прямой удар коленом в лоб врага. -${damage}, [${firstOpponent.damageHP}/${firstOpponent.defaultHP}]`,
+        `${firstOpponent.name} забылся, но в это время наглый ${secondOpponent.name}, приняв волевое решение, неслышно подойдя сзади, ударил. -${damage}, [${firstOpponent.damageHP}/${firstOpponent.defaultHP}]`,
+        `${firstOpponent.name} пришел в себя, но неожиданно ${secondOpponent.name} случайно нанес мощнейший удар. -${damage}, [${firstOpponent.damageHP}/${firstOpponent.defaultHP}]`,
+        `${firstOpponent.name} поперхнулся, но в это время ${secondOpponent.name} нехотя раздробил кулаком \<вырезанно цензурой\> противника. -${damage}, [${firstOpponent.damageHP}/${firstOpponent.defaultHP}]`,
+        `${firstOpponent.name} удивился, а ${secondOpponent.name} пошатнувшись влепил подлый удар. -${damage}, [${firstOpponent.damageHP}/${firstOpponent.defaultHP}]`,
+        `${firstOpponent.name} высморкался, но неожиданно ${secondOpponent.name} провел дробящий удар. -${damage}, [${firstOpponent.damageHP}/${firstOpponent.defaultHP}]`,
+        `${firstOpponent.name} пошатнулся, и внезапно наглый ${secondOpponent.name} беспричинно ударил в ногу противника -${damage}, [${firstOpponent.damageHP}/${firstOpponent.defaultHP}]`,
+        `${firstOpponent.name} расстроился, как вдруг, неожиданно ${secondOpponent.name} случайно влепил стопой в живот соперника. -${damage}, [${firstOpponent.damageHP}/${firstOpponent.defaultHP}]`,
+        `${firstOpponent.name} пытался что-то сказать, но вдруг, неожиданно ${secondOpponent.name} со скуки, разбил бровь сопернику. -${damage}, [${firstOpponent.damageHP}/${firstOpponent.defaultHP}]`
+    ];
+    return logs[random(logs.length - 1)];
+}
+
+function createLogs() {
+    const logBlock = document.createElement('div');
+    const gameArea = document.querySelector('html');
+    gameArea.appendChild(logBlock).setAttribute('id', 'logs');
 }
 
 function init() {
     console.log('Start Game!');
-    renderHP(character);
-    renderHP(enemy);
+    character.renderHP();
+    enemy.renderHP();
     setupButtons(buttonsConfig);
+    createLogs();
 }
 
 init();
