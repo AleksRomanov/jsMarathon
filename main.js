@@ -26,20 +26,53 @@ const buttonsConfig = [
     {
         elButton: document.getElementById('btn-kick'),
         damageMultiplier: 20,
+        counter: 0,
+        name: 'Thunder Jolt',
+        makeActionLog,
+        limit: 5,
     },
     {
         elButton: document.getElementById('btn-fatality'),
         damageMultiplier: 40,
+        counter: 0,
+        name: 'FATALITY!!!',
+        makeActionLog,
+        limit: 1,
     },
 ];
 
+function makeActionLog() {
+    const consoleLog = document.createElement('p');
+    let logsBar = document.getElementById('logs');
+    if (this.counter <= this.limit) {
+        consoleLog.innerText = `Колличество применений удара "${this.name}" : ${this.counter}. Осталось: ${this.limit - this.counter}`;
+    } else {
+        consoleLog.innerText = `Вы не можете использовать удар "${this.name}"`;
+    }
+    logsBar.insertBefore(consoleLog, logsBar.children[0]);
+}
+
+function renderButtonActions(btn) {
+    btn.elButton.innerText = `${btn.name} (${btn.limit - btn.counter})`;
+}
 
 function setupButtons(buttons) {
     for (let i = 0; i < buttons.length; i++) {
+        renderButtonActions(buttons[i]);
         buttons[i].elButton.addEventListener('click', function () {
-            console.log('KICK!!!');
-            character.changeHP(random(buttons[i].damageMultiplier));
-            enemy.changeHP(random(buttons[i].damageMultiplier));
+            console.log(this);
+            ++buttons[i].counter;
+
+            if (buttons[i].counter <= buttons[i].limit) {
+                this.innerText = `${buttons[i].name} (${buttons[i].limit - buttons[i].counter})`;
+                console.log('KICK!!!');
+                character.changeHP(random(buttons[i].damageMultiplier));
+                enemy.changeHP(random(buttons[i].damageMultiplier));
+            } else {
+                buttons[i].elButton.disabled = true;
+            }
+
+            buttons[i].makeActionLog();
         });
 
     }
@@ -99,7 +132,7 @@ function random(num) {
 }
 
 function createLog(target, person, damage) {
-    const logsBar = document.getElementById('logs');
+    let logsBar = document.getElementById('logs');
     const consoleLog = document.createElement('p');
     consoleLog.innerText = generateLog(target, person, damage);
     logsBar.insertBefore(consoleLog, logsBar.children[0])
@@ -121,7 +154,7 @@ function generateLog(firstOpponent, secondOpponent, damage) {
     return logs[random(logs.length - 1)];
 }
 
-function createLogs() {
+function createLogsBar() {
     const logBlock = document.createElement('div');
     const gameArea = document.querySelector('html');
     gameArea.appendChild(logBlock).setAttribute('id', 'logs');
@@ -132,7 +165,7 @@ function init() {
     character.renderHP();
     enemy.renderHP();
     setupButtons(buttonsConfig);
-    createLogs();
+    createLogsBar();
 }
 
 init();
