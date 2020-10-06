@@ -1,85 +1,33 @@
-const character = {
+import Pokemon from "./pokemon.js";
+import Actions from "./actions.js";
+
+const player1 = new Pokemon({
     name: 'Pikachu',
-    defaultHP: 100,
-    damageHP: 100,
-    elHP: document.getElementById('health-character'),
-    elProgressbar: document.getElementById('progressbar-character'),
-}
+    hp: 150,
+    selectors: 'character'
+})
 
-const enemy = {
+const player2 = new Pokemon({
     name: 'Charmander',
-    defaultHP: 100,
-    damageHP: 100,
-    elHP: document.getElementById('health-enemy'),
-    elProgressbar: document.getElementById('progressbar-enemy'),
-}
+    hp: 200,
+    selectors: 'enemy'
+})
 
-const buttonsConfig = [
+const actions = [
     {
+        name: 'Thunder Jolt',
         elButton: document.getElementById('btn-kick'),
         damageMultiplier: 20,
+        limit: 7
     },
     {
-        elButton: document.getElementById('btn-fatality'),
-        damageMultiplier: 30,
-    },
-];
-
-
-function setupButtons(buttons) {
-    for (let i = 0; i < buttons.length; i++) {
-        buttons[i].elButton.addEventListener('click', function () {
-            console.log('KICK!!!');
-            changeHP(random(buttons[i].damageMultiplier), character);
-            changeHP(random(buttons[i].damageMultiplier), enemy);
-        });
-
+        name: 'FATALITY!!!',
+        elButton: document.getElementById('btn-kick-spec'),
+        damageMultiplier: 40,
+        limit: 3
     }
-}
+]
 
+const adjustButtons = new Actions({actions})
 
-function renderHPLife(person) {
-    person.elHP.innerText = person.damageHP + ' / ' + person.defaultHP;
-}
-
-function renderProgressbarHP(person) {
-    person.elProgressbar.style.width = person.damageHP + '%'
-}
-
-function renderHP(person) {
-    renderHPLife(person);
-    renderProgressbarHP(person);
-}
-
-function buttonsDisable(buttons) {
-    for (let i = 0; i < buttons.length; i++) {
-        buttons[i].elButton.disabled = true;
-
-    }
-}
-
-function changeHP(count, person) {
-    if (person.damageHP < count) {
-        person.damageHP = 0;
-        buttonsDisable(buttonsConfig);
-        renderHP(person);
-        console.log(person.damageHP);
-        alert('Бедный' + person.name +'проиграл бой!');
-
-    } else {
-        person.damageHP -= count;
-        renderHP(person);
-    }
-}
-
-function random(num) {
-
-    return Math.ceil(Math.random() * num);
-}
-
-function init() {
-    console.log('Start Game!');
-    setupButtons(buttonsConfig);
-}
-
-init();
+export {player1, player2, actions};
