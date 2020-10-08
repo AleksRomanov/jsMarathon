@@ -1,5 +1,5 @@
-import {actions} from "./main.js"
-import {player1, player2} from "./main.js"
+// import {actions} from "./main.js"
+// import {player1, player2} from "./main.js"
 
 class Selectors {
     constructor(name) {
@@ -9,7 +9,7 @@ class Selectors {
 }
 
 class Pokemon extends Selectors {
-    constructor({name, hp, selectors}) {
+    constructor({name, hp, selectors, attacks = []}) {
         super(selectors);
 
         this.name = name;
@@ -18,8 +18,11 @@ class Pokemon extends Selectors {
             total: hp
         };
 
+        this.attacks = attacks;
+
         this.renderHP();
     }
+
 
     renderHP = () => {
         this.renderHPLabel();
@@ -34,10 +37,12 @@ class Pokemon extends Selectors {
         this.elHPBar.style.width = (this.hp.current * 100) / this.hp.total + '%';
     };
 
-    disableALlButtons = (buttons) => {
-        for (let i = 0; i < buttons.length; i++) {
-            buttons[i].elButton.disabled = true;
-        }
+    disableALlActions = () => {
+        const actions = document.querySelector('.control').querySelectorAll('button');
+        actions.forEach(action => {
+            action.disabled = true;
+
+        })
     };
 
     getDamage = (count) => {
@@ -47,7 +52,9 @@ class Pokemon extends Selectors {
 
         if (count > (this.hp.current * 100) / this.hp.total) {
             this.hp.current = 0;
-            this.disableALlButtons(actions)
+            this.disableALlActions();
+            alert(`Персонаж ${this.name} проиграл!`);
+            // gameReset();
         }
 
         if (this.name === player1.name) {
@@ -68,11 +75,9 @@ class Pokemon extends Selectors {
 
     random = (num) => Math.ceil(Math.random() * num);
 
-
-
     generateHitLog = (firstPerson, secondPerson, damage) => {
         const logs = [
-            `${firstPerson.name} вспомнил что-то важное, но неожиданно ${secondPerson.name}, не помня себя от испуга, ударил в предплечье врага. -${damage}, [${firstPerson.hp.current}/${firstPerson.hp.current}]`, // -12, [88/100]
+            `${firstPerson.name} вспомнил что-то важное, но неожиданно ${secondPerson.name}, не помня себя от испуга, ударил в предплечье врага. -${damage}, [${firstPerson.hp.current}/${firstPerson.hp.current}]`,
             `${firstPerson.name} поперхнулся, и за это ${secondPerson.name} с испугу приложил прямой удар коленом в лоб врага. -${damage}, [${firstPerson.hp.current}/${firstPerson.hp.current}]`,
             `${firstPerson.name} забылся, но в это время наглый ${secondPerson.name}, приняв волевое решение, неслышно подойдя сзади, ударил. -${damage}, [${firstPerson.hp.current}/${firstPerson.hp.current}]`,
             `${firstPerson.name} пришел в себя, но неожиданно ${secondPerson.name} случайно нанес мощнейший удар. -${damage}, [${firstPerson.hp.current}/${firstPerson.hp.current}]`,
