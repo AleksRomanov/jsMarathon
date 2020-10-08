@@ -47,13 +47,16 @@ import {pokemons} from "./pokemons.js";
 class Game {
     constructor() {
         // this.generatePokemon = generatePokemon();
-        this.player = this.generatePokemon();
-        this.enemy = this.generatePokemon();
-        this.attacks1 = this.player.attacks;
-        this.attacks2 = this.enemy.attacks;
-        // this.createConsole();
+        this.charachter1 = this.generatePokemon();
+        this.charachter2 = this.generatePokemon();
+        this.attacks1 = this.charachter1.attacks;
+        this.attacks2 = this.charachter2.attacks;
 
-        // this.player1();
+        this.player1 = this.player;
+        console.log(this.player1);
+        this.player2 = this.enemy;
+        console.log(this.player2);
+
         // this.player2();
         // this.renderNames(this.player, this.enemy)
         // this.renderAvatars(this.player, this.enemy)
@@ -61,20 +64,17 @@ class Game {
     };
 
     generatePokemon = () => pokemons[random(pokemons.length - 1)];
-    //
-    //
-    //
-    //
-    player1 = new Pokemon({
-        ...this.player,
+
+    player = new Pokemon({
+        ...this.charachter1,
         selectors: 'player1'
     });
     //
     //
-    // player2 = new Pokemon({
-    //     ...this.enemy,
-    //     selectors: 'player2'
-    // });
+    enemy = new Pokemon({
+        ...this.charachter2,
+        selectors: 'player2'
+    });
     //
     // adjustButtons = new Actions({
     //
@@ -98,10 +98,7 @@ class Game {
 }
 
 const startGame = new Game();
-console.log(startGame);
+// console.log(startGame);
 
 
-
-
-
-// export {player1, player2};
+export {startGame};
