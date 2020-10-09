@@ -1,5 +1,5 @@
-// import {actions} from "./main.js"
-// import {player1, player2} from "./main.js"
+import {player1, player2, winEnemy} from "./game.js";
+
 
 class Selectors {
     constructor(name) {
@@ -9,17 +9,15 @@ class Selectors {
 }
 
 class Pokemon extends Selectors {
-    constructor({name, hp, selectors, attacks = []}) {
+    constructor({name, hp, selectors, attacks, img = []}) {
         super(selectors);
-
         this.name = name;
+        this.img = img;
         this.hp = {
             current: hp,
             total: hp
         };
-
         this.attacks = attacks;
-
         this.renderHP();
     }
 
@@ -40,30 +38,27 @@ class Pokemon extends Selectors {
     disableALlActions = () => {
         const actions = document.querySelector('.control').querySelectorAll('button');
         actions.forEach(action => {
-            action.disabled = true;
-
+            action.remove();
         })
     };
 
     getDamage = (count) => {
         const damageCount = Math.ceil((this.hp.total / 100) * count);
 
-        this.hp.current -= damageCount;
 
         if (count > (this.hp.current * 100) / this.hp.total) {
-            this.hp.current = 0;
             this.disableALlActions();
             alert(`Персонаж ${this.name} проиграл!`);
-            // gameReset();
-        }
-
-        if (this.name === player1.name) {
-            this.makeHItLog(player1, player2, damageCount);
+            new winEnemy();
         } else {
-            this.makeHItLog(player2, player1, damageCount);
+            if (this.name === player1.name) {
+                this.makeHItLog(player1, player2, damageCount);
+            } else {
+                this.makeHItLog(player2, player1, damageCount);
+            }
+            this.hp.current -= damageCount;
+            this.renderHP();
         }
-
-        this.renderHP();
     };
 
     makeHItLog = (target, person, damage) => {

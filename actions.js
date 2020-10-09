@@ -1,8 +1,7 @@
-// import {player1, player2} from "./main.js"
-import {startGame} from "./main.js"
+import {player1, player2} from "./game.js";
 
 class Actions {
-    constructor({attacks1, attacks2}) {
+    constructor({attacks1, attacks2 = []}) {
         this.attacks1 = attacks1;
         this.attacks2 = attacks2[0];
         this.setupHitButtons(this.attacks1, this.attacks2);
@@ -50,17 +49,17 @@ class Actions {
         let This = this;
         This.renderActionLimits(button, action, actionCounter);
 
+
         return function () {
             if (actionCounter < action.maxCount) {
-                console.log(action.damageMultiplier);
-                startGame.player2.getDamage(This.random(action.damageMultiplier));
-                startGame.player1.getDamage(This.random(action2.damageMultiplier));
+                player2.getDamage(This.random(action.damageMultiplier));
+                player1.getDamage(This.random(action2.damageMultiplier));
                 ++actionCounter;
                 This.makeActionLog(actionCounter, action);
                 This.renderActionLimits(button, action, actionCounter);
             } else {
                 button.disabled = true;
-                // This.makeActionLog(actionCounter, action);
+                This.makeActionLog(actionCounter, action);
             }
         }
     };
