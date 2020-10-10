@@ -200,12 +200,28 @@ class Game {
 
     }
 
-
-    startGame = () => {
+    getPokemons = async () => {
         this.backResponse = new Backend();
         // console.log(this.backResponse)
-        const test =  this.backResponse.getPokemons();
-        console.log(test);
+        this.test = await this.backResponse.getPokemons();
+        // console.log(this.test);
+        // this.addEnemy();
+        // this.addCharacter();
+        //
+        // this.createConsole();
+        //
+        // this.resetGame();
+    };
+
+
+    startGame = async () => {
+
+        await this.getPokemons();
+        console.log(this.test)
+        // this.backResponse = new Backend();
+        // // console.log(this.backResponse)
+        // const test =  this.backResponse.getPokemons();
+        // console.log(test);
         // this.addEnemy();
         // this.addCharacter();
         //

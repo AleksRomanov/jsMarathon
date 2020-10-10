@@ -9,7 +9,7 @@ class Backend {
 
         const responce = await fetch('https://reactmarathon-api.netlify.app/api/pokemons');
         const body = await responce.json();
-        console.log(body)
+        // console.log(body)
         return body;
     }
 }
