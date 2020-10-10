@@ -3,9 +3,6 @@ import Pokemon from "./pokemon.js";
 import random from "./utils.js";
 
 class Game {
-    constructor() {
-    };
-
     generateRandomPokemon = () => pokemons[random(pokemons.length - 1)];
 
     createConsole = () => {
@@ -14,12 +11,11 @@ class Game {
         playGround.appendChild(consoleBlock).setAttribute('id', 'logs');
     };
 
-
     renderActionLimits = (button, action, counter) => {
         button.innerText = `${action.name} (${action.maxCount - counter})`;
     };
 
-    makeActionLog(counter, action) {
+    makeActionLog = (counter, action) => {
         const consoleBar = document.getElementById('logs');
         const consoleLog = document.createElement('p');
 
@@ -35,6 +31,7 @@ class Game {
     renderHP = (player) => {
         this.renderHPLabel(player);
         this.renderHPBar(player);
+        this.setHPStatus(player);
     };
 
     renderHPLabel = (player) => {
@@ -45,24 +42,66 @@ class Game {
         player.elHPBar.style.width = (player.hp.current * 100) / player.hp.total + '%';
     };
 
+    setHPStatus = (player) => {
+        if (player.hp.current <= 60 && player.hp.current >= 20) {
+            player.elHPBar.classList.add('low');
+        } else if (player.hp.current < 20) {
+            player.elHPBar.classList.add('critical');
+        } else {
+            player.elHPBar.classList.remove('critical');
+            player.elHPBar.classList.remove('low');
+        }
+    };
+
     makeAction = (action, button, action2) => {
         let actionCounter = 0;
         let This = this;
         this.renderActionLimits(button, action, actionCounter);
-        // console.log(startGame);
 
         return function () {
             if (actionCounter < action.maxCount) {
-                This.getDamage(This.player2, random(action.damageMultiplier));
-                console.log(This.player1)
-                This.getDamage(This.player1, random(action2.damageMultiplier));
                 ++actionCounter;
+
+                This.getDamage(This.player2, random(action.damageMultiplier));
+                This.getDamage(This.player1, random(action2.damageMultiplier));
+
+
                 This.makeActionLog(actionCounter, action);
                 This.renderActionLimits(button, action, actionCounter);
+
             } else {
                 button.disabled = true;
+
                 This.makeActionLog(actionCounter, action);
             }
+        }
+    };
+
+    getDamage = (player, count) => {
+        const damageCount = Math.ceil((player.hp.total / 100) * count);
+
+        if (count > (player.hp.current * 100) / player.hp.total) {
+            this.disableALlActions();
+
+            if (player.selectors === this.player1.selectors) {
+                alert(`Вы проиграли! Начнёте снова?`);
+
+                this.startGame();
+            } else {
+                this.player2.hp.total = 0;
+                alert(`Вы выиграли! Продолжите бой?`);
+                this.changeEnemy();
+            }
+
+        } else {
+            if (player.selectors === this.player1.selectors) {
+                this.makeHItLog(this.player1, this.player2, damageCount);
+            } else {
+                this.makeHItLog(this.player2, this.player1, damageCount);
+            }
+
+            player.hp.current -= damageCount;
+            this.renderHP(player);
         }
     };
 
@@ -129,70 +168,48 @@ class Game {
         enemyImage.src = enemy.img;
     };
 
-    startGame = () => {
-        let char = this.generateRandomPokemon();
-        let char2 = this.generateRandomPokemon();
+    addCharacter = () => {
+        let character = this.generateRandomPokemon();
 
         this.player1 = new Pokemon({
-            ...char,
+            ...character,
             selectors: 'player1'
         })
+        this.attacks1 = this.player1.attacks;
+    }
+
+    addEnemy = () => {
+        let enemy = this.generateRandomPokemon();
 
         this.player2 = new Pokemon({
-            ...char2,
+            ...enemy,
             selectors: 'player2'
         })
-
-        this.attacks1 = this.player1.attacks;
         this.attacks2 = this.player2.attacks[0];
+    }
 
+    startGame = () => {
+        this.addEnemy();
+        this.addCharacter();
 
         this.createConsole();
 
-        this.setupHitButtons(this.attacks1, this.attacks2);
+        this.resetGame();
+    };
 
+    resetGame = () => {
+        this.setupHitButtons(this.attacks1, this.attacks2);
         this.renderNames(this.player1, this.player2);
         this.renderHP(this.player1);
         this.renderHP(this.player2);
         this.renderAvatars(this.player1, this.player2);
-
     };
 
-    getDamage = (player, count) => {
-        const damageCount = Math.ceil((player.hp.total / 100) * count);
-
-        if (count > (player.hp.current * 100) / player.hp.total) {
-            this.disableALlActions();
-
-            if (player.selectors === this.player1.selectors) {
-                alert(`Вы проиграли! Начнёте снова?`);
-
-                this.startGame();
-            } else {
-                alert(`Вы выиграли! Продолжите бой?`);
-                // new winGame();
-                this.resetGame();
-
-            }
-
-        } else {
-            if (player.selectors === this.player1.selectors) {
-                this.makeHItLog(this.player1, this.player2, damageCount);
-            } else {
-                this.makeHItLog(this.player2, this.player1, damageCount);
-            }
-
-            player.hp.current -= damageCount;
-            this.renderHP(player);
-
-        }
+    changeEnemy = () => {
+        this.addEnemy();
+        this.resetGame();
     };
 
-    resetGame = () => {
-        this.startGame();
-        this.renderHP(this.player1);
-        this.renderHP(this.player2);
-    };
 }
 
 export {Game};
